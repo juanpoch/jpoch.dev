@@ -1,0 +1,390 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const writeups = [
+  {
+    tag: 'CVE',      tagClass: 'tag-red',  cardClass: 'card-red',
+    title: 'CVE-2026-73570 — Zimbra RCE',
+    desc:  'SMTP log poisoning → swatchdog → reverse shell → LDAP credential dump. Full kill chain documented.',
+    href:  '#',
+  },
+  {
+    tag: 'HTB',      tagClass: 'tag-blue', cardClass: 'card-blue',
+    title: 'Hack The Box — Machine writeups',
+    desc:  'Detailed walkthroughs covering initial foothold, privilege escalation, and lessons learned.',
+    href:  '#',
+  },
+  {
+    tag: 'Research', tagClass: 'tag-lav',  cardClass: 'card-lav',
+    title: 'AD Attack Paths — research notes',
+    desc:  'BloodHound queries, Kerberoasting, ACL abuse, and lateral movement in enterprise environments.',
+    href:  '#',
+  },
+];
+
+const tutorials = [
+  {
+    title: 'Kali Linux setup from zero',
+    desc:  'Tokyo Night, Kitty, Starship, tmux and Neovim — the full environment walkthrough.',
+    href:  '#',
+  },
+  {
+    title: 'Privilege escalation — Linux fundamentals',
+    desc:  'Module from educaciónIT: SUID, cron, sudo, writable paths, capabilities.',
+    href:  '#',
+  },
+  {
+    title: 'Active Directory 101 for pentesters',
+    desc:  'Enum, authentication flows, and first attack paths — for students starting with AD.',
+    href:  '#',
+  },
+];
+
+const cheatsheets = [
+  { title: 'Linux PrivEsc',    desc: 'Quick reference: checklist, one-liners, and tool flags.', href: '#' },
+  { title: 'Active Directory', desc: 'Enum → foothold → lateral → DA — commands and OPSEC notes.', href: '#' },
+  { title: 'Reverse Shells',   desc: 'Bash, Python, PowerShell, nc, socat — copy-paste ready.', href: '#' },
+  { title: 'Web Pentesting',   desc: 'Burp tips, SQLi, XSS, SSRF, file upload — organized by class.', href: '#' },
+];
+
+const videos = [
+  {
+    status: 'Recording',  statusClass: 'tag-org',
+    title: 'Zimbra RCE — CVE-2026-73570 full walkthrough',
+    desc:  '18 min YouTube + 3:30 LinkedIn cut. Script done, attack diagram pending.',
+  },
+  {
+    status: 'Planned', statusClass: 'tag-muted',
+    title: 'SMTP log poisoning deep dive',
+    desc:  'Companion video: manual exploitation without swatchdog, detection opportunities.',
+  },
+  {
+    status: 'Planned', statusClass: 'tag-muted',
+    title: 'Lab setup: Zimbra 8 on Docker',
+    desc:  'How to replicate the vulnerable environment for research and practice.',
+  },
+];
+---
+
+<Layout>
+  <!-- ─── Hero ─────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="noise-overlay"></div>
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="container hero-content">
+      <p class="hero-label mono">// offensive security</p>
+      <h1 class="hero-name">j<span class="grad-text">poch</span></h1>
+      <p class="hero-role">
+        Pentester &nbsp;·&nbsp; Ethical Hacking Instructor &nbsp;·&nbsp; CVE Researcher
+      </p>
+      <div class="hero-links">
+        <a href="https://github.com/juanpoch" class="btn-ghost" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/juanmpoch/" class="btn-ghost" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Featured CVE ──────────────────────────────────── -->
+  <section class="featured-cve">
+    <div class="container">
+      <div class="featured-card">
+        <div class="noise-overlay"></div>
+        <div class="featured-body">
+          <div class="featured-meta">
+            <span class="tag tag-red">CVE-2026-73570</span>
+            <span class="tag tag-muted">Critical &nbsp;·&nbsp; RCE</span>
+            <span class="tag tag-muted">Zimbra 8.x</span>
+          </div>
+          <h2 class="featured-title">Zimbra RCE via SMTP Log Poisoning</h2>
+          <p class="featured-desc body-text">
+            Unauthenticated remote code execution chaining SMTP header injection with Zimbra's
+            swatchdog log monitor. Full kill chain from log write to LDAP credential extraction.
+          </p>
+          <a href="#" class="btn-primary">Read writeup →</a>
+        </div>
+        <div class="kill-chain" aria-label="Attack kill chain">
+          <div class="chain-step">
+            <span class="chain-icon mono">01</span>
+            <span class="chain-name">SMTP Log Poisoning</span>
+          </div>
+          <div class="chain-arrow">↓</div>
+          <div class="chain-step">
+            <span class="chain-icon mono">02</span>
+            <span class="chain-name">swatchdog trigger</span>
+          </div>
+          <div class="chain-arrow">↓</div>
+          <div class="chain-step">
+            <span class="chain-icon mono">03</span>
+            <span class="chain-name">Code Execution</span>
+          </div>
+          <div class="chain-arrow">↓</div>
+          <div class="chain-step chain-step--red">
+            <span class="chain-icon mono">04</span>
+            <span class="chain-name">Reverse Shell</span>
+          </div>
+          <div class="chain-arrow">↓</div>
+          <div class="chain-step chain-step--red">
+            <span class="chain-icon mono">05</span>
+            <span class="chain-name">LDAP Credentials</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Writeups ──────────────────────────────────────── -->
+  <section id="writeups" class="content-section">
+    <div class="container">
+      <p class="section-label">// writeups</p>
+      <h2 class="section-title">Research & Walkthroughs</h2>
+      <p class="section-sub body-text">CVEs, HTB machines, and vulnerability research — full technical detail, no hand-holding.</p>
+      <div class="grid-3">
+        {writeups.map(w => (
+          <a href={w.href} class={`card ${w.cardClass}`}>
+            <span class={`tag ${w.tagClass}`}>{w.tag}</span>
+            <p class="card-title">{w.title}</p>
+            <p class="card-desc">{w.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Tutorials ─────────────────────────────────────── -->
+  <section id="tutorials" class="content-section">
+    <div class="container">
+      <p class="section-label">// tutorials</p>
+      <h2 class="section-title">Tutorials</h2>
+      <p class="section-sub body-text">Content from educaciónIT classes and personal setups — explained for humans, not docs.</p>
+      <div class="grid-3">
+        {tutorials.map(t => (
+          <a href={t.href} class="card card-grn">
+            <span class="tag tag-grn">Tutorial</span>
+            <p class="card-title">{t.title}</p>
+            <p class="card-desc">{t.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Cheatsheets ───────────────────────────────────── -->
+  <section id="cheatsheets" class="content-section">
+    <div class="container">
+      <p class="section-label">// cheatsheets</p>
+      <h2 class="section-title">Cheatsheets</h2>
+      <p class="section-sub body-text">Quick reference cards for the tools and techniques I use on engagements.</p>
+      <div class="grid-4">
+        {cheatsheets.map(c => (
+          <a href={c.href} class="card card-lav">
+            <span class="tag tag-lav">PDF</span>
+            <p class="card-title">{c.title}</p>
+            <p class="card-desc">{c.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── YouTube ───────────────────────────────────────── -->
+  <section id="youtube" class="content-section">
+    <div class="container">
+      <p class="section-label">// youtube</p>
+      <h2 class="section-title">Video Content</h2>
+      <p class="section-sub body-text">Technical videos — full walkthroughs and deep dives. Production status below.</p>
+      <div class="grid-3">
+        {videos.map(v => (
+          <div class="card card-org">
+            <span class={`tag ${v.statusClass}`}>{v.status}</span>
+            <p class="card-title">{v.title}</p>
+            <p class="card-desc">{v.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── About ────────────────────────────────────────── -->
+  <section id="about" class="section-about">
+    <div class="container">
+      <div class="about-strip">
+        <div class="about-cell">
+          <p class="about-label mono">Role</p>
+          <p class="about-value">Pentester</p>
+          <p class="about-sub body-text">Offensive security — web, infra, AD environments.</p>
+        </div>
+        <div class="about-divider" aria-hidden="true"></div>
+        <div class="about-cell">
+          <p class="about-label mono">Teaching</p>
+          <p class="about-value">Instructor</p>
+          <p class="about-sub body-text">Ethical hacking at educaciónIT since 2025.</p>
+        </div>
+        <div class="about-divider" aria-hidden="true"></div>
+        <div class="about-cell">
+          <p class="about-label mono">Location</p>
+          <p class="about-value">Argentina</p>
+          <p class="about-sub body-text">Open to remote international opportunities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* ─── Hero ───────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  translate: -50% -55%;
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse at center,
+    color-mix(in srgb, var(--blue) 12%, transparent) 0%,
+    color-mix(in srgb, var(--lav)  6%, transparent) 45%,
+    transparent 70%
+  );
+  animation: glow-pulse 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.7; scale: 1;    }
+  50%       { opacity: 1;   scale: 1.08; }
+}
+.hero-content { position: relative; z-index: 1; padding-block: 6rem; }
+.hero-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 12vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+.hero-role {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--body);
+  margin-bottom: 2.5rem;
+}
+.hero-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+/* ─── Featured CVE ───────────────────────────────────────── */
+.featured-cve { padding-block: var(--section-gap); }
+.featured-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-top: 1px solid color-mix(in srgb, var(--red) 35%, transparent);
+  border-radius: 14px;
+  padding: clamp(2rem, 5vw, 3rem);
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 3rem;
+  align-items: start;
+  position: relative;
+  overflow: hidden;
+}
+.featured-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.featured-title {
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 0.85rem;
+}
+.featured-desc { margin-bottom: 1.75rem; max-width: 55ch; line-height: 1.6; }
+
+/* Kill chain */
+.kill-chain {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
+}
+.chain-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.chain-step--red { border-color: color-mix(in srgb, var(--red) 30%, transparent); }
+.chain-icon { font-size: 0.62rem; color: var(--muted); }
+.chain-name { font-size: 0.75rem; font-weight: 500; color: var(--body); }
+.chain-arrow { text-align: center; color: var(--muted); font-size: 0.75rem; line-height: 1; }
+
+/* ─── Content sections ───────────────────────────────────── */
+.content-section { padding-block: var(--section-gap); }
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ─── About ──────────────────────────────────────────────── */
+.section-about {
+  padding-block: var(--section-gap);
+  border-top: 1px solid var(--border);
+}
+.about-strip {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.about-cell { padding: 2.5rem clamp(1.5rem, 4vw, 3rem); }
+.about-divider { width: 1px; background: var(--border); }
+.about-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.about-value {
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+.about-sub { font-size: 0.875rem; }
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .featured-card { grid-template-columns: 1fr; }
+  .kill-chain { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .chain-arrow { transform: rotate(-90deg); }
+  .about-strip { grid-template-columns: 1fr; }
+  .about-divider { width: 100%; height: 1px; }
+}
+</style>
