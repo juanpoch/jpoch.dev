@@ -1,0 +1,362 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    date: string;
+    tags?: string[];
+    cve?: string;
+    cvss?: string;
+    software?: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const { title, description, date, tags = [], cve, cvss, software } = frontmatter;
+
+const dateFormatted = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {description && <meta name="description" content={description} />}
+    <title>{title} — jpoch</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav id="nav">
+      <div class="nav-inner">
+        <a href="/" class="nav-logo">jpoch</a>
+        <div class="nav-links">
+          <a href="/#writeups">Writeups</a>
+          <a href="/#tutorials">Tutorials</a>
+          <a href="/#cheatsheets">Cheatsheets</a>
+          <a href="/#youtube">YouTube</a>
+          <a href="/#about">About</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="writeup-main">
+      <div class="writeup-container">
+
+        <a href="/" class="back-link mono">← back</a>
+
+        <header class="writeup-header">
+          <div class="writeup-meta-top">
+            {cve && <span class="badge badge-red mono">{cve}</span>}
+            {cvss && <span class="badge badge-muted mono">CVSS {cvss}</span>}
+            <span class="badge badge-muted mono">CISA KEV</span>
+          </div>
+
+          <h1 class="writeup-title">{title}</h1>
+
+          {description && <p class="writeup-desc">{description}</p>}
+
+          <div class="writeup-meta-bottom">
+            {software && <span class="meta-item mono">{software}</span>}
+            <span class="meta-item mono">{dateFormatted}</span>
+          </div>
+
+          {tags.length > 0 && (
+            <div class="writeup-tags">
+              {tags.map(t => <span class="tag tag-muted">{t}</span>)}
+            </div>
+          )}
+        </header>
+
+        <div class="writeup-divider"></div>
+
+        <article class="prose">
+          <slot />
+        </article>
+
+      </div>
+    </main>
+
+    <footer>
+      <span class="mono muted">jpoch © 2026 — offsec</span>
+    </footer>
+
+    <script>
+      const nav = document.getElementById('nav');
+      window.addEventListener('scroll', () => {
+        nav?.classList.toggle('scrolled', window.scrollY > 20);
+      });
+
+      document.querySelectorAll('.prose pre').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'copy';
+        btn.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          const text = (code ?? pre).innerText;
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+        pre.style.position = 'relative';
+        pre.appendChild(btn);
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+.writeup-main {
+  padding-top: 5rem;
+  padding-bottom: 6rem;
+  min-height: 100vh;
+}
+
+.writeup-container {
+  max-width: 72ch;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.back-link {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--blue); }
+
+/* ─── Header ─────────────────────────────────────── */
+.writeup-header { margin-bottom: 2.5rem; }
+
+.writeup-meta-top {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+.badge-red  { color: var(--red);  border-color: var(--red);  background: color-mix(in srgb, var(--red) 10%, transparent); }
+.badge-muted { color: var(--muted); border-color: var(--border); background: var(--s1); }
+
+.writeup-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.writeup-desc {
+  font-size: 1.05rem;
+  color: var(--body);
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+  max-width: 60ch;
+}
+
+.writeup-meta-bottom {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.meta-item {
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.writeup-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.writeup-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 3rem;
+}
+
+/* ─── Prose ───────────────────────────────────────── */
+.prose {
+  color: var(--body);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.prose :global(h2) {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin-top: 3rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose :global(h3) {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+}
+
+.prose :global(p) { margin-bottom: 1.2rem; }
+
+.prose :global(a) {
+  color: var(--blue);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--blue) 40%, transparent);
+  text-underline-offset: 3px;
+}
+.prose :global(a:hover) { text-decoration-color: var(--blue); }
+
+.prose :global(strong) { color: var(--text); font-weight: 600; }
+
+.prose :global(code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  color: var(--lav);
+}
+
+.prose :global(pre) {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose :global(pre code) {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.prose :global(blockquote) {
+  border-left: 3px solid var(--blue);
+  background: color-mix(in srgb, var(--blue) 5%, transparent);
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  color: var(--text);
+}
+
+.prose :global(blockquote p) { margin-bottom: 0; }
+
+.prose :global(ul), .prose :global(ol) {
+  padding-left: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.prose :global(li) { margin-bottom: 0.4rem; }
+
+.prose :global(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.prose :global(th) {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.prose :global(td) {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.85rem;
+  color: var(--body);
+}
+
+.prose :global(tr:nth-child(even) td) { background: var(--s1); }
+
+.prose :global(hr) {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* ─── Copy button ────────────────────────────────── */
+:global(.copy-btn) {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+.prose :global(pre:hover .copy-btn) { opacity: 1; }
+:global(.copy-btn:hover) { color: var(--text); }
+:global(.copy-btn.copied) {
+  opacity: 1;
+  color: var(--grn);
+  border-color: var(--grn);
+}
+
+/* ─── Callout boxes ───────────────────────────────── */
+.prose :global(.callout-warn) {
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--red) 35%, transparent);
+  border-left: 3px solid var(--red);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+</style>
