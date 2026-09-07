@@ -92,6 +92,18 @@ const dateFormatted = new Date(date).toLocaleDateString('en-US', {
     </footer>
 
     <script>
+      import { inject } from '@vercel/analytics';
+      inject({
+        beforeSend: (event) => {
+          try {
+            if (localStorage.getItem('jpoch_owner') === '1') return null;
+          } catch {}
+          return event;
+        },
+      });
+    </script>
+
+    <script>
       const nav = document.getElementById('nav');
       window.addEventListener('scroll', () => {
         nav?.classList.toggle('scrolled', window.scrollY > 20);
