@@ -10,11 +10,12 @@ interface Props {
     cve?: string;
     cvss?: string;
     software?: string;
+    youtube?: string;
   };
 }
 
 const { frontmatter } = Astro.props;
-const { title, description, date, tags = [], cve, cvss, software } = frontmatter;
+const { title, description, date, tags = [], cve, cvss, software, youtube } = frontmatter;
 
 const dateFormatted = new Date(date).toLocaleDateString('en-US', {
   year: 'numeric', month: 'long', day: 'numeric',
@@ -41,12 +42,10 @@ const dateFormatted = new Date(date).toLocaleDateString('en-US', {
   <body>
     <nav id="nav">
       <div class="nav-inner">
-        <a href="/" class="nav-logo">jpoch</a>
+        <a href="/" class="nav-logo">jpoch<span class="nav-sl">//</span></a>
         <div class="nav-links">
           <a href="/#writeups">Writeups</a>
-          <a href="/#tutorials">Tutorials</a>
-          <a href="/#cheatsheets">Cheatsheets</a>
-          <a href="/#youtube">YouTube</a>
+          <a href="/#youtube">Videos</a>
           <a href="/#about">About</a>
         </div>
       </div>
@@ -81,6 +80,13 @@ const dateFormatted = new Date(date).toLocaleDateString('en-US', {
         </header>
 
         <div class="writeup-divider"></div>
+
+        {youtube && (
+          <a href={youtube} target="_blank" rel="noopener" class="video-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <span>Watch the full video walkthrough →</span>
+          </a>
+        )}
 
         <article class="prose">
           <slot />
@@ -361,6 +367,28 @@ const dateFormatted = new Date(date).toLocaleDateString('en-US', {
   opacity: 1;
   color: var(--grn);
   border-color: var(--grn);
+}
+
+/* ─── Video banner ───────────────────────────────── */
+.video-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: color-mix(in srgb, var(--blue) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 25%, transparent);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 6px 6px 0;
+  padding: 0.75rem 1rem;
+  margin-bottom: 2.5rem;
+  color: var(--blue);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.video-banner:hover {
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
+  border-left-color: var(--blue);
 }
 
 /* ─── Callout boxes ───────────────────────────────── */
