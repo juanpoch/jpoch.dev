@@ -201,7 +201,7 @@ img { max-width: 100%; display: block; }
   color: var(--blue);
 }
 .nav-sl {
-  color: var(--org);
+  color: #c05500;
 }
 .nav-links {
   display: flex;
