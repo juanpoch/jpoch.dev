@@ -104,12 +104,12 @@ const videos = [
           <div class="featured-meta">
             <span class="tag tag-red">CVE-2026-73570</span>
             <span class="tag tag-muted">High &nbsp;·&nbsp; RCE</span>
-            <span class="tag tag-muted">Zimbra 10.x</span>
+            <span class="tag tag-muted">Zimbra</span>
           </div>
           <h2 class="featured-title">Zimbra RCE via SMTP Log Poisoning</h2>
           <p class="featured-desc body-text">
-            Unauthenticated remote code execution chaining SMTP header injection with Zimbra's
-            swatchdog log monitor. Full kill chain from log write to LDAP credential extraction.
+            Unauthenticated remote code execution chaining a specially crafted SMTP request with Zimbra's
+            swatchdog log monitor. Full attack chain from log poisoning to command execution and LDAP credential access.
           </p>
           <div class="featured-actions">
             <a href="/writeups/cve-2026-73570" class="btn-primary">Read writeup →</a>
