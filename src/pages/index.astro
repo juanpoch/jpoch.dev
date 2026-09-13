@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 
 const writeups = [
   {
-    tag: 'CVE',      tagClass: 'tag-red',  cardClass: 'card-red',
+    tag: 'CVE Analysis', tagClass: 'tag-red',  cardClass: 'card-red',
     title: 'CVE-2026-73570 — Zimbra RCE',
     desc:  'SMTP log poisoning → swatchdog → reverse shell → LDAP credential dump. Full attack chain documented.',
     href:  '/writeups/cve-2026-73570',
@@ -53,16 +53,6 @@ const videos = [
     title: 'Zimbra RCE — CVE-2026-73570 full walkthrough',
     desc:  'SMTP log poisoning → swatchdog → command execution → reverse shell. Full attack chain, root cause analysis and patch diff.',
     href:  'https://www.youtube.com/watch?v=sN1Dt6gu3wY',
-  },
-  {
-    status: 'Planned', statusClass: 'tag-muted',
-    title: 'SMTP log poisoning deep dive',
-    desc:  'Companion video: manual exploitation without swatchdog, detection opportunities.',
-  },
-  {
-    status: 'Planned', statusClass: 'tag-muted',
-    title: 'Lab setup: Zimbra 8 on Docker',
-    desc:  'How to replicate the vulnerable environment for research and practice.',
   },
 ];
 ---
@@ -155,7 +145,7 @@ const videos = [
     <div class="container">
       <p class="section-label">// writeups</p>
       <h2 class="section-title">Research & Walkthroughs</h2>
-      <p class="section-sub body-text">CVEs, HTB machines, and vulnerability research — full technical detail, no hand-holding.</p>
+      <p class="section-sub body-text">CVE analysis, HTB machines, and original security research — full technical detail, no hand-holding.</p>
       <div class="grid-3">
         {writeups.map(w => (
           <a href={w.href} class={`card ${w.cardClass}`}>
