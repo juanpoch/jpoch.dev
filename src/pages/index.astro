@@ -49,9 +49,10 @@ const cheatsheets = [
 
 const videos = [
   {
-    status: 'Recording',  statusClass: 'tag-org',
+    status: 'Published',  statusClass: 'tag-grn',
     title: 'Zimbra RCE — CVE-2026-73570 full walkthrough',
-    desc:  '18 min YouTube + 3:30 LinkedIn cut. Script done, attack diagram pending.',
+    desc:  'SMTP log poisoning → swatchdog → reverse shell. Full kill chain, root cause analysis and patch diff.',
+    href:  'https://www.youtube.com/watch?v=sN1Dt6gu3wY',
   },
   {
     status: 'Planned', statusClass: 'tag-muted',
@@ -102,7 +103,7 @@ const videos = [
         <div class="featured-body">
           <div class="featured-meta">
             <span class="tag tag-red">CVE-2026-73570</span>
-            <span class="tag tag-muted">Critical &nbsp;·&nbsp; RCE</span>
+            <span class="tag tag-muted">High &nbsp;·&nbsp; RCE</span>
             <span class="tag tag-muted">Zimbra 8.x</span>
           </div>
           <h2 class="featured-title">Zimbra RCE via SMTP Log Poisoning</h2>
@@ -110,7 +111,13 @@ const videos = [
             Unauthenticated remote code execution chaining SMTP header injection with Zimbra's
             swatchdog log monitor. Full kill chain from log write to LDAP credential extraction.
           </p>
-          <a href="/writeups/cve-2026-73570" class="btn-primary">Read writeup →</a>
+          <div class="featured-actions">
+            <a href="/writeups/cve-2026-73570" class="btn-primary">Read writeup →</a>
+            <a href="https://www.youtube.com/watch?v=sN1Dt6gu3wY" class="btn-ghost" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              Watch →
+            </a>
+          </div>
         </div>
         <div class="kill-chain" aria-label="Attack kill chain">
           <div class="chain-step">
@@ -207,11 +214,17 @@ const videos = [
       </p>
       <div class="grid-3">
         {videos.map(v => (
-          <div class="card card-org">
-            <span class={`tag ${v.statusClass}`}>{v.status}</span>
-            <p class="card-title">{v.title}</p>
-            <p class="card-desc">{v.desc}</p>
-          </div>
+          v.href
+            ? <a href={v.href} class="card card-org" target="_blank" rel="noopener">
+                <span class={`tag ${v.statusClass}`}>{v.status}</span>
+                <p class="card-title">{v.title}</p>
+                <p class="card-desc">{v.desc}</p>
+              </a>
+            : <div class="card card-org">
+                <span class={`tag ${v.statusClass}`}>{v.status}</span>
+                <p class="card-title">{v.title}</p>
+                <p class="card-desc">{v.desc}</p>
+              </div>
         ))}
       </div>
     </div>
@@ -316,6 +329,7 @@ const videos = [
   margin-bottom: 0.85rem;
 }
 .featured-desc { margin-bottom: 1.75rem; max-width: 55ch; line-height: 1.6; }
+.featured-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
 
 /* Kill chain */
 .kill-chain {
